@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+</head>
+<body>
+<h1>Projects</h1><br/><br/>
+<a href="/create_project">Create project</a>
+<div th:each="project : ${projects}">
+    <a th:href="@{project/{id}/tickets/open_list(id=${project.id})}" th:text="${project.title}"></a>
+    <a th:href="@{update_project/{id}(id=${project.id})}">Edit</a>
+    <div th:each="user : ${project.users}">
+        <p th:text="${user.login}"></p>
+    </div>
+</div>
+</body>
+</html>

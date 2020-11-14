@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Details</title>
+</head>
+<body>
+<h2 th:text="${ticket.title}"></h2>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th colspan="2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>ID</td>
+            <td th:text="${ticket.id}"></td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td th:text="${ticket.type}"></td>
+        </tr>
+        <tr>
+            <td>Priority</td>
+            <td th:text="${ticket.priority}"></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td th:text="${ticket.status}"></td>
+        </tr>
+        <tr>
+            <td>Open date</td>
+            <td th:text="${ticket.openDate}"></td>
+        </tr>
+        <tr th:if="${ticket.closeDate != null}">
+            <td>Close date</td>
+            <td th:text="${ticket.closeDate}"></td>
+        </tr>
+        <tr>
+            <td>Reporter</td>
+            <td th:text="${ticket.reporter.login}"></td>
+        </tr>
+        <tr>
+            <td>Assignee</td>
+            <td th:text="${ticket.assignee.login}"></td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td th:text="${ticket.description}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<p></p>
+<div th:switch="${ticket.status}">
+    <a th:case="${T(org.suai.tracker_test.model.Status).OPEN}" href="../open_list">Back</a>
+    <a th:case="${T(org.suai.tracker_test.model.Status).IN_PROGRESS}" href="../progress_list">Back</a>
+    <a th:case="${T(org.suai.tracker_test.model.Status).CLOSE}" href="../close_list">Back</a>
+</div>
+</body>
+</html>
