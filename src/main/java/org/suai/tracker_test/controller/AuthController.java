@@ -55,10 +55,4 @@ public class AuthController {
 
         return "redirect:/projects";
     }
-
-    @GetMapping("/success")
-    public String getSuccessPage() {
-        return "auth/success";
-    }
-
 }

@@ -84,12 +84,4 @@ public class UserService {
 
         return result;
     }
-
-   /* public List<User> findAllByProject(Project project) {
-        return userRepository.findAll()
-                .stream()
-                .filter(user -> user.getProject() != null && user.getProject().equals(project))
-                .collect(Collectors.toList());
-    }*/
-
 }

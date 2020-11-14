@@ -8,6 +8,9 @@
 <div th:switch="${user}">
     <h2 th:case="null">Something go wrong!</h2>
     <h2 th:case="*">My profile</h2>
+    <form action="#" th:action="@{./delete/{id}(id=${user.id})}" method="post">
+        <button type="submit">Delete profile</button>
+    </form>
     <table>
         <thead>
         <tr>
