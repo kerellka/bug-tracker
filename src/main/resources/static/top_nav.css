@@ -1,0 +1,123 @@
+* {box-sizing: border-box}
+
+/* Set height of body and the document to 100% */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: "Lato", sans-serif;
+    overflow: auto;
+}
+
+/* Style tab links */
+.tablink {
+    background-color: #25b470;
+    color: #ffffff;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 20px 16px;
+    font-size: 17px;
+    width: 33.3333333%;
+}
+
+.tablink:hover {
+    background-color: #157853;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    margin: 0;
+}
+
+th, td {
+    text-align: left;
+    padding: 16px;
+}
+
+th,tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tickets {
+    margin-right: 5px;
+    margin-top: 65px;
+    margin-left: 235px;
+}
+
+.tickets a{
+    color: #157853;
+}
+
+.topBar {
+    margin-right: 5px;
+    margin-left: 235px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+}
+
+.sidenav {
+    height: 100%;
+    width: 230px;
+    position: fixed;
+    z-index: 0;
+    top: 0;
+    left: 0;
+    background-color: #25b370;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding-top: 60px;
+    padding-left: 0;
+    margin-right: 2px;
+}
+
+.sidelink {
+    background-color: #25b370;
+    text-align: left;
+    color: #ffffff;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 20px 16px;
+    font-size: 20px;
+    width: 100%;
+}
+
+.sidelink:hover {
+    background-color: #157853;
+}
+
+.sidelink#logout{
+    margin-top: 620px;
+    text-align: center;
+}
+
+.actionsTop {
+    text-align: left;
+}
+/*
+
+.actionsInside {
+    background-color: #25b470;
+    color: #ffffff;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 5px;
+    font-size: 17px;
+    width: 33.3333333%;
+}
+
+.actionsInside:hover {
+    background-color: #157853;
+}
+
+.tdActions {
+    padding-left: 20px;
+}*/
