@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.suai.tracker_test.model.User;
 import org.suai.tracker_test.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping("/me")
 public class UserController {
@@ -31,7 +33,8 @@ public class UserController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteProfile(@PathVariable Long id) {
+    public String deleteProfile(@PathVariable Long id, HttpServletRequest request) {
+        request.getSession().invalidate(); // TODO костыль - пофиксить по возможности
         userService.deleteById(id);
         return "auth/login";
     }

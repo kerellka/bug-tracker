@@ -8,7 +8,7 @@
 <body>
 
 <div id="mySidenav" class="sidenav">
-    <form action="./open_list" method="GET">
+    <form action="/me/profile" method="GET">
         <button class="sidelink" type="submit">User</button>
     </form>
     <form action="./create" method="GET">
@@ -17,7 +17,7 @@
     <form action="/projects" method="GET">
         <button class="sidelink" type="submit">Projects</button>
     </form>
-    <form action="/auth/logout" method="POST">
+    <form action="#" th:action="@{/auth/logout}" method="POST">
         <button class="sidelink" id="logout" type="submit">Logout</button>
     </form>
 </div>
