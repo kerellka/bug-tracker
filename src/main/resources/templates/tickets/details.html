@@ -54,10 +54,10 @@
     </table>
 </div>
 <p></p>
-<div th:switch="${ticket.status}">
-    <a th:case="${T(org.suai.tracker_test.model.Status).OPEN}" href="../open_list">Back</a>
-    <a th:case="${T(org.suai.tracker_test.model.Status).IN_PROGRESS}" href="../progress_list">Back</a>
-    <a th:case="${T(org.suai.tracker_test.model.Status).CLOSE}" href="../close_list">Back</a>
+<div th:switch="${ticket.status.name()}">
+    <a th:case="OPEN" th:href="@{../list?status=OPEN}">Back</a>
+    <a th:case="IN_PROGRESS" th:href="@{../list?status=IN_PROGRESS}">Back</a>
+    <a th:case="CLOSE" th:href="@{../list?status=CLOSE}">Back</a>
 </div>
 </body>
 </html>

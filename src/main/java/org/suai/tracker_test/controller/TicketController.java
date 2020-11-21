@@ -28,12 +28,47 @@ public class TicketController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/open_list")
+    @GetMapping("/list")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String getTickets(Model model, @PathVariable String projectId,
+                             @RequestParam("status") String status) {
+        List<Ticket> tickets = ticketService.findByStatus(Status.valueOf(status), projectService.findById(Long.parseLong(projectId)));
+        model.addAttribute("tickets", tickets);
+        model.addAttribute("status", Status.valueOf(status));
+        return "tickets/all";
+    }
+
+   /* @GetMapping("/open_list")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public String getOpenTickets(Model model, @PathVariable String projectId) {
         List<Ticket> tickets = ticketService.findByStatus(Status.OPEN, projectService.findById(Long.parseLong(projectId)));
         model.addAttribute("tickets", tickets);
         return "tickets/open_list";
+    }
+
+    @GetMapping("/close_list/sortedDate")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String getOpenTicketsByDate(Model model, @PathVariable String projectId) {
+        List<Ticket> tickets = ticketService.getSortedByOpenDate(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), "asc");
+        model.addAttribute("tickets", tickets);
+        return "tickets/close_list";
+    }
+
+    @GetMapping("/close_list/sortedPriority")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String getOpenTicketsByPriority(Model model, @PathVariable String projectId) {
+        List<Ticket> tickets = ticketService.getSortedByPriority(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), "asc");
+        model.addAttribute("tickets", tickets);
+        return "tickets/close_list";
+    }
+
+    @GetMapping("/close_list/withPriority{priority}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String getOpenTicketsByPriority(Model model, @PathVariable String projectId,
+                                           @PathVariable String priority) {
+        List<Ticket> tickets = ticketService.findByStatusAndPriority(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), Priority.valueOf(priority));
+        model.addAttribute("tickets", tickets);
+        return "tickets/close_list";
     }
 
     @GetMapping("/progress_list")
@@ -50,20 +85,20 @@ public class TicketController {
         List<Ticket> tickets = ticketService.findByStatus(Status.CLOSE, projectService.findById(Long.parseLong(projectId)));
         model.addAttribute("tickets", tickets);
         return "tickets/close_list";
-    }
+    }*/
 
     @GetMapping("/progress/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String moveToProgress(@PathVariable("id") Long id) {
+    public String moveToProgress(@PathVariable Long id) {
         ticketService.setStatus(id, Status.IN_PROGRESS);
-        return "redirect:/project/{projectId}/tickets/open_list";
+        return "redirect:/project/{projectId}/tickets/list?status=OPEN";
     }
 
     @GetMapping("/close/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String moveToClose(@PathVariable("id") Long id) {
+    public String moveToClose(@PathVariable Long id) {
         ticketService.setStatus(id, Status.CLOSE);
-        return "redirect:/project/{projectId}/tickets/progress_list";
+        return "redirect:/project/{projectId}/tickets/list?status=IN_PROGRESS";
     }
 
     @GetMapping("/create")
@@ -80,12 +115,12 @@ public class TicketController {
         ticket.setAssignee(userService.findByLogin(username));
         ticket.setProject(projectService.findById(Long.parseLong(projectId)));
         ticketService.saveTicket(ticket);
-        return "redirect:/project/{projectId}/tickets/open_list";
+        return "redirect:/project/{projectId}/tickets/list?status=OPEN";
     }
 
     @GetMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String createUpdateForm(@PathVariable("id") Long id, Model model) {
+    public String createUpdateForm(@PathVariable Long id, Model model) {
         Ticket ticket = ticketService.findById(id);
         model.addAttribute("ticket", ticket);
         return "tickets/update";
@@ -93,8 +128,11 @@ public class TicketController {
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public String updateTicket(@RequestParam("id") Long id, @RequestParam("assignee") String assignee,
-                               @RequestParam("description") String description, @RequestParam("priority") Priority priority) {
+    public String updateTicket(@RequestParam Long id,
+                               @RequestParam String assignee,
+                               @RequestParam String description,
+                               @RequestParam Priority priority,
+                               @PathVariable String projectId) {
         Ticket ticket = ticketService.findById(id);
         ticket.setPriority(priority);
         ticket.setAssignee(userService.findByLogin(assignee));
@@ -102,13 +140,14 @@ public class TicketController {
         ticket.setDescription(description);
         ticketService.saveTicket(ticket);
 
-        return correctToListRedirect(ticket);
+        return correctToListRedirect(ticket, projectId);
     }
 
     @GetMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String deleteOpenTicket(@PathVariable("id") Long id) {
-        String returnStr = correctToListRedirect(ticketService.findById(id));
+    public String deleteOpenTicket(@PathVariable("id") Long id,
+                                   @PathVariable String projectId) {
+        String returnStr = correctToListRedirect(ticketService.findById(id), projectId);
         ticketService.deleteById(id);
         return returnStr;
     }
@@ -121,17 +160,27 @@ public class TicketController {
         return "tickets/details";
     }
 
-    private String correctToListRedirect(Ticket ticket) {
+    @GetMapping("/take/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String setAssigneeCurrentUser(@CurrentSecurityContext(expression = "authentication.name") String username,
+                                         @PathVariable Long id) {
+        Ticket ticket = ticketService.findById(id);
+        ticket.setAssignee(userService.findByLogin(username));
+        ticketService.saveTicket(ticket);
+        return "redirect:/project/{projectId}/tickets/list?status=OPEN";
+    }
+
+    private String correctToListRedirect(Ticket ticket, String projectId) {
         String returnStr;
         switch (ticket.getStatus()) {
             case OPEN:
-                returnStr = "redirect:/tickets/open_list";
+                returnStr = "redirect:/project/" + projectId + "/tickets/list?status=OPEN";
                 break;
             case IN_PROGRESS:
-                returnStr = "redirect:/tickets/progress_list";
+                returnStr = "redirect:/project/" + projectId + "/tickets/list?status=IN_PROGRESS";
                 break;
             case CLOSE:
-                returnStr = "redirect:/tickets/close_list";
+                returnStr = "redirect:/project/" + projectId + "/tickets/list?status=CLOSE";
                 break;
             default:
                 returnStr = "";
