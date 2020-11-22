@@ -30,8 +30,9 @@
     <label th:for="reporter">Reporter</label>
     <input type="text" th:value="${ticket.reporter.login}" id="reporter"/>
     <br/><br/>
-    <label for="assignee">Assignee</label>
-    <input type="text" th:value="${ticket.assignee.login}" id="assignee" name="assignee"/>
+    <label th:for="assignee">Assignee</label>
+    <input th:if="${ticket.assignee != null}" type="text" th:value="${ticket.assignee.login}" th:id="assignee" name="assignee"/>
+    <input th:unless="${ticket.assignee != null}" type="text" value="null" th:id="assignee" name="assignee"/>
     <br/><br/>
     <label for="description">Description</label><br/>
     <textarea id="description" form="ticket_form"

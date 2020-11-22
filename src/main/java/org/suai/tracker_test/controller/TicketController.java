@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.suai.tracker_test.exceptions.UserNotFoundException;
 import org.suai.tracker_test.model.*;
 import org.suai.tracker_test.service.ProjectService;
 import org.suai.tracker_test.service.TicketService;
@@ -112,7 +113,7 @@ public class TicketController {
     public String createTicket(@CurrentSecurityContext(expression = "authentication.name") String username,
                                Ticket ticket, @PathVariable String projectId) {
         ticket.setReporter(userService.findByLogin(username));
-        ticket.setAssignee(userService.findByLogin(username));
+        ticket.setAssignee(null);
         ticket.setProject(projectService.findById(Long.parseLong(projectId)));
         ticketService.saveTicket(ticket);
         return "redirect:/project/{projectId}/tickets/list?status=OPEN";
@@ -135,8 +136,12 @@ public class TicketController {
                                @PathVariable String projectId) {
         Ticket ticket = ticketService.findById(id);
         ticket.setPriority(priority);
-        ticket.setAssignee(userService.findByLogin(assignee));
-        ticket.setProject(projectService.findById((long)1));
+        try {
+            ticket.setAssignee(userService.findByLogin(assignee));
+        } catch (UserNotFoundException e) {
+            ticket.setAssignee(null);
+        }
+        ticket.setProject(projectService.findById(Long.parseLong(projectId)));
         ticket.setDescription(description);
         ticketService.saveTicket(ticket);
 

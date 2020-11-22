@@ -100,6 +100,35 @@ th,tr:nth-child(even) {
 .actionsTop {
     text-align: left;
 }
+
+.button {
+    padding: 20px;
+    text-align: center;
+    font-size: 30px;
+    margin: 0 0;
+}
+
+.low {
+    background-color: #eec643;
+    border: none;
+    outline: none;
+    color: #eec643;
+    border-radius: 12px;
+}
+.mid {
+    background-color: #ec9657;
+    border: none;
+    outline: none;
+    color: #ec9657;
+    border-radius: 12px;
+}
+.high {
+    background-color: #cd4747;
+    border: none;
+    outline: none;
+    color: #cd4747;
+    border-radius: 12px;
+}
 /*
 
 .actionsInside {

@@ -44,7 +44,8 @@
         </tr>
         <tr>
             <td>Assignee</td>
-            <td th:text="${ticket.assignee.login}"></td>
+            <td th:if="${ticket.assignee != null}" th:text="${ticket.assignee.login}"></td>
+            <td th:unless="${ticket.assignee != null}">null</td>
         </tr>
         <tr>
             <td>Description</td>

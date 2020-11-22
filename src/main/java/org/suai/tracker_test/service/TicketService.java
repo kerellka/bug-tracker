@@ -1,14 +1,11 @@
 package org.suai.tracker_test.service;
 
-import org.hibernate.mapping.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.suai.tracker_test.model.*;
 import org.suai.tracker_test.repository.TicketRepository;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,23 +43,28 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public List<Ticket> findByStatusAndType(Status status, Project project, Type type) {
-        return ticketRepository.findAll()
+    public List<Ticket> findByStatusAndTypeAndPriority(Status status, Project project, Type type, Priority[] priorities) {
+        return findByStatus(status, project)
                 .stream()
-                .filter(ticket -> ticket.getStatus().equals(status) &&
-                        ticket.getProject().equals(project) &&
-                        ticket.getType().equals(type))
+                .filter(ticket -> {
+                    for (Priority priority : priorities) {
+                        if (ticket.getPriority().equals(priority)) {
+                            return ticket.getType().equals(type);
+                        }
+                    }
+                    return false;
+                })
                 .collect(Collectors.toList());
     }
 
-    public List<Ticket> findByStatusAndPriority(Status status, Project project, Priority priority) {
+    /*public List<Ticket> findByStatusAndPriority(Status status, Project project, Priority priority) {
         return ticketRepository.findAll()
                 .stream()
                 .filter(ticket -> ticket.getStatus().equals(status) &&
                         ticket.getProject().equals(project) &&
                         ticket.getPriority().equals(priority))
                 .collect(Collectors.toList());
-    }
+    }*/
 
     public List<Ticket> getSortedByOpenDate(Status status, Project project, String increase) {
         return ticketRepository.findAll(Sort.by(increase.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "openDate"))
@@ -76,14 +78,18 @@ public class TicketService {
                 .stream()
                 .filter(ticket -> ticket.getStatus().equals(status) && ticket.getProject().equals(project));
 
-        if (increase.equals("asc")) {
-            return ticketStream
-                    .sorted((Comparator.comparing(Ticket::getPriority)))
-                    .collect(Collectors.toList());
-        } else {
-            return ticketStream
-                    .sorted((Collections.reverseOrder(Comparator.comparing(Ticket::getPriority))))
-                    .collect(Collectors.toList());
+        switch(increase){
+            case "asc":
+                return ticketStream
+                        .sorted((Comparator.comparing(Ticket::getPriority)))
+                        .collect(Collectors.toList());
+            case "desc":
+                return ticketStream
+                        .sorted((Collections.reverseOrder(Comparator.comparing(Ticket::getPriority))))
+                        .collect(Collectors.toList());
+            default:
+                return ticketStream.collect(Collectors.toList());
+
         }
     }
 

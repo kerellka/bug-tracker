@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Close list</title>
+    <title>Tickets</title>
     <link rel="stylesheet" th:href="@{/top_nav.css}">
 </head>
 <body>
@@ -59,7 +59,11 @@
                 <div th:if="${ticket.status == status}">
                     <td th:text="${ticket.id}"></td>
                     <td><a th:text="${ticket.title}" th:href="@{./details/{id}(id=${ticket.id})}"></a></td>
-                    <td th:text="${ticket.priority}"></td>
+                    <div th:switch="${ticket.priority.name()}">
+                        <td th:case="'LOW'"><button class="label low">T E X T</button></td>
+                        <td th:case="'MID'"><button class="label mid">T E X T</button></td>
+                        <td th:case="'HIGH'"><button class="label high">T E X T</button></td>
+                    </div>
                     <td th:text="${ticket.type}"></td>
                     <td th:text="${ticket.openDate}"></td>
                     <td th:if="${ticket.closeDate != null}" th:text="${ticket.closeDate}"></td>
@@ -74,7 +78,13 @@
                         <a th:href="@{./update/{id}(id=${ticket.id})}">Edit</a>
                     </td>
                     <td th:if="${ticket.status.name() == 'OPEN'}">
-                        <a th:href="@{./progress/{id}(id=${ticket.id})}">In progress</a>
+                        <a th:if="${ticket.assignee != null}" th:href="@{./progress/{id}(id=${ticket.id})}">In progress</a>
+                        <a th:unless="${ticket.assignee != null}" style="text-decoration: underline; cursor: pointer" onclick="alertPopUp()">In progress</a>
+                        <script>
+                            function alertPopUp() {
+                                alert("Set assignee before");
+                            }
+                        </script>
                     </td>
                     <td th:if="${ticket.status.name() == 'IN_PROGRESS'}">
                         <a th:href="@{./close/{id}(id=${ticket.id})}">Close</a>
