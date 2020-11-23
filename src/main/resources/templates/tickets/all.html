@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Tickets</title>
-    <link rel="stylesheet" th:href="@{/top_nav.css}">
+    <link rel="stylesheet" th:href="@{/tickets.css}">
 </head>
 <body>
-
 <div id="mySidenav" class="sidenav">
     <form action="/me/profile" method="GET">
         <button class="sidelink" type="submit">User</button>
@@ -22,6 +21,10 @@
     </form>
 </div>
 
+<div id="myProgress">
+    <div id="myBar" th:style="'width:' + ${progress} + '%;'"></div>
+</div>
+
 <div class="topBar">
     <form action="./list" method="GET">
         <button class="tablink" type="submit" name="status" value="OPEN">Open</button>
@@ -33,6 +36,7 @@
         <button class="tablink" type="submit" name="status" value="CLOSE">Close</button>
     </form>
 </div>
+
 
 <div th:switch="${tickets}" class="tickets">
     <h2 th:case="null">No tickets found!</h2>

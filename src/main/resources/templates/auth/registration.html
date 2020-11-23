@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Registration</title>
+    <link rel="stylesheet" th:href="@{/registration.css}">
 </head>
 <html>
 <body>
@@ -10,35 +11,35 @@
     <h2>Registration</h2>
     <table>
         <tr>
-            <td>Login:</td>
-            <td><input type="text" th:field="*{login}"/></td>
+
+            <td><input type="text" placeholder="Enter Login" name="login" required th:field="*{login}"/></td>
             <div th:if="${loginError}">
                 <div style="color: red" th:text="${loginError}"></div>
             </div>
         </tr>
 
         <tr>
-            <td>Email:</td>
-            <td><input type="text" th:field="*{email}"/></td>
+
+            <td><input type="text" placeholder="Enter Email" name="email" required th:field="*{email}"/></td>
             <div th:if="${emailError}">
                 <div style="color: red" th:text="${emailError}"></div>
             </div>
         </tr>
 
         <tr>
-            <td>Password:</td>
-            <td><input type="password" th:field="*{password}"/></td>
+
+            <td><input type="password"  placeholder="Enter Password" name="psw" required  th:field="*{password}"/></td>
         </tr>
 
         <tr>
-            <td>Confirm Password:</td>
-            <td><input type="password" th:field="*{confirmPassword}"/></td>
+
+            <td><input type="password"  placeholder="Confirm Password" name="confrsw" required  th:field="*{confirmPassword}"/></td>
             <div th:if="${passwordError}">
                 <div style="color: red" th:text="${passwordError}"></div>
             </div>
         </tr>
         <tr>
-            <td><input name="submit" type="submit" value="Register" /></td>
+            <td><input class="btn" name="submit" type="submit" value="Register" /></td>
         </tr>
     </table>
 </form>

@@ -93,6 +93,13 @@ public class TicketService {
         }
     }
 
+    public int countProgress(Project project) {
+        List<Ticket> all = ticketRepository.findAll();
+        List<Ticket> closed = findByStatus(Status.CLOSE, project);
+
+        return (closed.size() * 100) / all.size();
+    }
+
     public void setStatus(Long id, Status newStatus) {
         Ticket ticket = ticketRepository.getOne(id);
         ticket.setStatus(newStatus);

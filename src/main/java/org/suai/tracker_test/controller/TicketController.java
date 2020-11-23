@@ -34,6 +34,9 @@ public class TicketController {
     public String getTickets(Model model, @PathVariable String projectId,
                              @RequestParam("status") String status) {
         List<Ticket> tickets = ticketService.findByStatus(Status.valueOf(status), projectService.findById(Long.parseLong(projectId)));
+
+
+        model.addAttribute("progress", ticketService.countProgress(projectService.findById(Long.parseLong(projectId))));
         model.addAttribute("tickets", tickets);
         model.addAttribute("status", Status.valueOf(status));
         return "tickets/all";

@@ -129,6 +129,19 @@ th,tr:nth-child(even) {
     color: #cd4747;
     border-radius: 12px;
 }
+
+#myProgress {
+    margin: 5px 5px 10px 235px;
+    background-color: #ddd;
+}
+
+#myBar {
+    height: 30px;
+    background-color: #25b370;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+}
 /*
 
 .actionsInside {
