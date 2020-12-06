@@ -13,16 +13,15 @@
     <form action="./create" method="GET">
         <button class="sidelink" type="submit">Add Ticket</button>
     </form>
+    <form action="./progress" method="GET">
+        <button class="sidelink" type="submit">Progress</button>
+    </form>
     <form action="/projects" method="GET">
         <button class="sidelink" type="submit">Projects</button>
     </form>
     <form action="/auth/logout" method="POST">
         <button class="sidelink" id="logout" type="submit">Logout</button>
     </form>
-</div>
-
-<div id="myProgress">
-    <div id="myBar" th:style="'width:' + ${progress} + '%;'"></div>
 </div>
 
 <div class="topBar">
@@ -37,6 +36,35 @@
     </form>
 </div>
 
+<div class="filter">
+    <form action="./list" method="GET">
+        <label for="sort">Sort by</label>
+        <select id="sort" name="sort">
+            <option value="default" selected>Default</option>
+            <option value="dateDESC">Open date new first</option>
+            <option value="dateASC">Open date old first</option>
+            <option value="priorityDESC">Priority high first</option>
+            <option value="priorityASC">Priority low first</option>
+        </select>
+        <br/>
+        <label>Priority</label>
+        <label for="low">LOW</label>
+        <input type="checkbox" id="low" name="priority" value="LOW">
+        <label for="mid">MID</label>
+        <input type="checkbox" id="mid" name="priority" value="MID">
+        <label for="high"> HIGH</label>
+        <input type="checkbox" id="high" name="priority" value="HIGH">
+        <br/>
+        <label>Type</label>
+        <label for="bug">BUG</label>
+        <input type="checkbox" id="bug" name="type" value="BUG">
+        <label for="feature">FEATURE</label>
+        <input type="checkbox" id="feature" name="type" value="FEATURE">
+        <input hidden name="status" th:value="${status}">
+        <br/>
+        <input type="submit" value="Filter">
+    </form>
+</div>
 
 <div th:switch="${tickets}" class="tickets">
     <h2 th:case="null">No tickets found!</h2>
@@ -64,9 +92,15 @@
                     <td th:text="${ticket.id}"></td>
                     <td><a th:text="${ticket.title}" th:href="@{./details/{id}(id=${ticket.id})}"></a></td>
                     <div th:switch="${ticket.priority.name()}">
-                        <td th:case="'LOW'"><button class="label low">T E X T</button></td>
-                        <td th:case="'MID'"><button class="label mid">T E X T</button></td>
-                        <td th:case="'HIGH'"><button class="label high">T E X T</button></td>
+                        <td th:case="'LOW'">
+                            <button class="label low">T E X T</button>
+                        </td>
+                        <td th:case="'MID'">
+                            <button class="label mid">T E X T</button>
+                        </td>
+                        <td th:case="'HIGH'">
+                            <button class="label high">T E X T</button>
+                        </td>
                     </div>
                     <td th:text="${ticket.type}"></td>
                     <td th:text="${ticket.openDate}"></td>
@@ -82,8 +116,10 @@
                         <a th:href="@{./update/{id}(id=${ticket.id})}">Edit</a>
                     </td>
                     <td th:if="${ticket.status.name() == 'OPEN'}">
-                        <a th:if="${ticket.assignee != null}" th:href="@{./progress/{id}(id=${ticket.id})}">In progress</a>
-                        <a th:unless="${ticket.assignee != null}" style="text-decoration: underline; cursor: pointer" onclick="alertPopUp()">In progress</a>
+                        <a th:if="${ticket.assignee != null}" th:href="@{./progress/{id}(id=${ticket.id})}">In
+                            progress</a>
+                        <a th:unless="${ticket.assignee != null}" style="text-decoration: underline; cursor: pointer"
+                           onclick="alertPopUp()">In progress</a>
                         <script>
                             function alertPopUp() {
                                 alert("Set assignee before");

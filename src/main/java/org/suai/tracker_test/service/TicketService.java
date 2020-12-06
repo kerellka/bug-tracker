@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,47 +44,40 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    public List<Ticket> findByStatusAndTypeAndPriority(Status status, Project project, Type type, Priority[] priorities) {
-        return findByStatus(status, project)
-                .stream()
-                .filter(ticket -> {
-                    for (Priority priority : priorities) {
-                        if (ticket.getPriority().equals(priority)) {
-                            return ticket.getType().equals(type);
-                        }
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
-    }
-
-    /*public List<Ticket> findByStatusAndPriority(Status status, Project project, Priority priority) {
+    public List<Ticket> findAllInProject(Project project) {
         return ticketRepository.findAll()
                 .stream()
-                .filter(ticket -> ticket.getStatus().equals(status) &&
-                        ticket.getProject().equals(project) &&
-                        ticket.getPriority().equals(priority))
-                .collect(Collectors.toList());
-    }*/
-
-    public List<Ticket> getSortedByOpenDate(Status status, Project project, String increase) {
-        return ticketRepository.findAll(Sort.by(increase.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, "openDate"))
-                .stream()
-                .filter(ticket -> ticket.getStatus().equals(status) && ticket.getProject().equals(project))
+                .filter(ticket -> ticket.getProject().equals(project))
                 .collect(Collectors.toList());
     }
 
-    public List<Ticket> getSortedByPriority(Status status, Project project, String increase) {
+    public List<Ticket> filterByTypeAndPriority(List<Ticket> input, Set<Type> types, Set<Priority> priorities) {
+        return input
+                .stream()
+                .filter(ticket -> types.isEmpty() || (types.contains(ticket.getType())))
+                .filter(ticket -> priorities.isEmpty() || priorities.contains(ticket.getPriority()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Ticket> getSortedBy(Status status, Project project, String sort) {
         Stream<Ticket> ticketStream = ticketRepository.findAll()
                 .stream()
                 .filter(ticket -> ticket.getStatus().equals(status) && ticket.getProject().equals(project));
 
-        switch(increase){
-            case "asc":
+        switch(sort){
+            case "dateASC":
+                return ticketStream
+                        .sorted((Comparator.comparing(Ticket::getOpenDate)))
+                        .collect(Collectors.toList());
+            case "dateDESC":
+                return ticketStream
+                        .sorted((Collections.reverseOrder(Comparator.comparing(Ticket::getOpenDate))))
+                        .collect(Collectors.toList());
+            case "priorityASC":
                 return ticketStream
                         .sorted((Comparator.comparing(Ticket::getPriority)))
                         .collect(Collectors.toList());
-            case "desc":
+            case "priorityDESC":
                 return ticketStream
                         .sorted((Collections.reverseOrder(Comparator.comparing(Ticket::getPriority))))
                         .collect(Collectors.toList());
@@ -94,7 +88,7 @@ public class TicketService {
     }
 
     public int countProgress(Project project) {
-        List<Ticket> all = ticketRepository.findAll();
+        List<Ticket> all = findAllInProject(project);
         List<Ticket> closed = findByStatus(Status.CLOSE, project);
 
         return (closed.size() * 100) / all.size();

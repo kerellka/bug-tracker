@@ -12,7 +12,7 @@ import org.suai.tracker_test.service.ProjectService;
 import org.suai.tracker_test.service.TicketService;
 import org.suai.tracker_test.service.UserService;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/project/{projectId}/tickets")
@@ -31,65 +31,37 @@ public class TicketController {
 
     @GetMapping("/list")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getTickets(Model model, @PathVariable String projectId,
-                             @RequestParam("status") String status) {
-        List<Ticket> tickets = ticketService.findByStatus(Status.valueOf(status), projectService.findById(Long.parseLong(projectId)));
+    public String getTickets(Model model, @PathVariable String projectId, @RequestParam("status") String status,
+                             @RequestParam(value = "sort", required = false, defaultValue = "default") String sort,
+                             @RequestParam(value = "type", required = false) String[] typesString,
+                             @RequestParam(value = "priority", required = false) String[] prioritiesString) {
 
+        Set<Type> types = new HashSet<>();
+        Set<Priority> priorities = new HashSet<>();
 
-        model.addAttribute("progress", ticketService.countProgress(projectService.findById(Long.parseLong(projectId))));
+        if (typesString != null) {
+            Arrays.stream(typesString).forEach(typeName -> types.add(Type.valueOf(typeName)));
+        }
+        if (prioritiesString != null) {
+            Arrays.stream(prioritiesString).forEach(priorityName -> priorities.add(Priority.valueOf(priorityName)));
+        }
+
+        List<Ticket> tickets = ticketService.getSortedBy(Status.valueOf(status),
+                projectService.findById(Long.parseLong(projectId)), sort);
+
+        tickets = ticketService.filterByTypeAndPriority(tickets, types, priorities);
+
         model.addAttribute("tickets", tickets);
         model.addAttribute("status", Status.valueOf(status));
         return "tickets/all";
     }
 
-   /* @GetMapping("/open_list")
+    @GetMapping("/progress")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getOpenTickets(Model model, @PathVariable String projectId) {
-        List<Ticket> tickets = ticketService.findByStatus(Status.OPEN, projectService.findById(Long.parseLong(projectId)));
-        model.addAttribute("tickets", tickets);
-        return "tickets/open_list";
+    public String getProgressBar(Model model, @PathVariable String projectId) {
+        model.addAttribute("progress", ticketService.countProgress(projectService.findById(Long.parseLong(projectId))));
+        return "tickets/progress";
     }
-
-    @GetMapping("/close_list/sortedDate")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getOpenTicketsByDate(Model model, @PathVariable String projectId) {
-        List<Ticket> tickets = ticketService.getSortedByOpenDate(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), "asc");
-        model.addAttribute("tickets", tickets);
-        return "tickets/close_list";
-    }
-
-    @GetMapping("/close_list/sortedPriority")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getOpenTicketsByPriority(Model model, @PathVariable String projectId) {
-        List<Ticket> tickets = ticketService.getSortedByPriority(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), "asc");
-        model.addAttribute("tickets", tickets);
-        return "tickets/close_list";
-    }
-
-    @GetMapping("/close_list/withPriority{priority}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getOpenTicketsByPriority(Model model, @PathVariable String projectId,
-                                           @PathVariable String priority) {
-        List<Ticket> tickets = ticketService.findByStatusAndPriority(Status.CLOSE, projectService.findById(Long.parseLong(projectId)), Priority.valueOf(priority));
-        model.addAttribute("tickets", tickets);
-        return "tickets/close_list";
-    }
-
-    @GetMapping("/progress_list")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getProgressTickets(Model model, @PathVariable String projectId) {
-        List<Ticket> tickets = ticketService.findByStatus(Status.IN_PROGRESS, projectService.findById(Long.parseLong(projectId)) );
-        model.addAttribute("tickets", tickets);
-        return "tickets/progress_list";
-    }
-
-    @GetMapping("/close_list")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String getCloseTickets(Model model, @PathVariable String projectId) {
-        List<Ticket> tickets = ticketService.findByStatus(Status.CLOSE, projectService.findById(Long.parseLong(projectId)));
-        model.addAttribute("tickets", tickets);
-        return "tickets/close_list";
-    }*/
 
     @GetMapping("/progress/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

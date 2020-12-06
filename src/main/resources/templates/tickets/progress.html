@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Progress</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
+</head>
+<body>
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="./list" method="GET">
+        <button class="sidelink" type="submit" name="status" value="OPEN">Tickets</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+
+<div id="myProgress">
+    <div id="myBar" th:style="'width:' + ${progress} + '%;'"></div>
+</div>
+</body>
+</html>
