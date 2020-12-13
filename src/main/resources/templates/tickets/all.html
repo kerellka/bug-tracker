@@ -89,7 +89,7 @@
             <tbody>
             <tr th:each="ticket : ${tickets}">
                 <div th:if="${ticket.status == status}">
-                    <td th:text="${ticket.id}"></td>
+                    <td th:inline="text">[['00' + ${ticket.id}]]</td>
                     <td><a th:text="${ticket.title}" th:href="@{./details/{id}(id=${ticket.id})}"></a></td>
                     <div th:switch="${ticket.priority.name()}">
                         <td th:case="'LOW'">

@@ -1,10 +1,11 @@
 package org.suai.tracker_test.model;
-
-public enum Status {
-    OPEN,
-    IN_PROGRESS,
-    CLOSE,
-    DELETED;
+public enum Action {
+    CREATE,
+    DELETE,
+    UPDATE,
+    PICK_UP,
+    MOVE_IN_PROGRESS,
+    CLOSE;
 
     @Override
     public String toString() {

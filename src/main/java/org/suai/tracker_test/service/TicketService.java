@@ -47,7 +47,7 @@ public class TicketService {
     public List<Ticket> findAllInProject(Project project) {
         return ticketRepository.findAll()
                 .stream()
-                .filter(ticket -> ticket.getProject().equals(project))
+                .filter(ticket -> ticket.getProject().equals(project) && !ticket.getStatus().equals(Status.DELETED))
                 .collect(Collectors.toList());
     }
 
@@ -92,6 +92,12 @@ public class TicketService {
         List<Ticket> closed = findByStatus(Status.CLOSE, project);
 
         return (closed.size() * 100) / all.size();
+    }
+
+    public long countWithStatus(Project project, Status status) {
+        return findAll().stream()
+                .filter(ticket -> ticket.getStatus().equals(status) && ticket.getProject().equals(project))
+                .count();
     }
 
     public void setStatus(Long id, Status newStatus) {

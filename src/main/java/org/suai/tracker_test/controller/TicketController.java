@@ -10,6 +10,7 @@ import org.suai.tracker_test.exceptions.UserNotFoundException;
 import org.suai.tracker_test.model.*;
 import org.suai.tracker_test.service.ProjectService;
 import org.suai.tracker_test.service.TicketService;
+import org.suai.tracker_test.service.TimelineService;
 import org.suai.tracker_test.service.UserService;
 
 import java.util.*;
@@ -21,12 +22,15 @@ public class TicketController {
     private final TicketService ticketService;
     private final UserService userService;
     private final ProjectService projectService;
+    private final TimelineService timelineService;
 
     @Autowired
-    public TicketController(TicketService ticketService, UserService userService, ProjectService projectService) {
+    public TicketController(TicketService ticketService, UserService userService,
+                            ProjectService projectService, TimelineService timelineService) {
         this.ticketService = ticketService;
         this.userService = userService;
         this.projectService = projectService;
+        this.timelineService = timelineService;
     }
 
     @GetMapping("/list")
@@ -59,21 +63,46 @@ public class TicketController {
     @GetMapping("/progress")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public String getProgressBar(Model model, @PathVariable String projectId) {
-        model.addAttribute("progress", ticketService.countProgress(projectService.findById(Long.parseLong(projectId))));
+        Project project = projectService.findById(Long.parseLong(projectId));
+        model.addAttribute("progress", ticketService.countProgress(project));
+        model.addAttribute("timeline", timelineService.findAllInProject(project));
+        model.addAttribute("open", ticketService.countWithStatus(project, Status.OPEN));
+        model.addAttribute("in_progress", ticketService.countWithStatus(project, Status.IN_PROGRESS));
+        model.addAttribute("close", ticketService.countWithStatus(project, Status.CLOSE));
         return "tickets/progress";
     }
 
     @GetMapping("/progress/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String moveToProgress(@PathVariable Long id) {
+    public String moveToProgress(@CurrentSecurityContext(expression = "authentication.name") String username,
+                                 @PathVariable Long id,
+                                 @PathVariable String projectId) {
         ticketService.setStatus(id, Status.IN_PROGRESS);
+
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.MOVE_IN_PROGRESS);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticketService.findById(id));
+        timelineService.saveTimeline(timeline);
+
         return "redirect:/project/{projectId}/tickets/list?status=OPEN";
     }
 
     @GetMapping("/close/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String moveToClose(@PathVariable Long id) {
+    public String moveToClose(@CurrentSecurityContext(expression = "authentication.name") String username,
+                              @PathVariable Long id,
+                              @PathVariable String projectId) {
         ticketService.setStatus(id, Status.CLOSE);
+
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.CLOSE);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticketService.findById(id));
+        timelineService.saveTimeline(timeline);
+
         return "redirect:/project/{projectId}/tickets/list?status=IN_PROGRESS";
     }
 
@@ -91,6 +120,14 @@ public class TicketController {
         ticket.setAssignee(null);
         ticket.setProject(projectService.findById(Long.parseLong(projectId)));
         ticketService.saveTicket(ticket);
+
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.CREATE);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticket);
+        timelineService.saveTimeline(timeline);
+
         return "redirect:/project/{projectId}/tickets/list?status=OPEN";
     }
 
@@ -104,7 +141,8 @@ public class TicketController {
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
-    public String updateTicket(@RequestParam Long id,
+    public String updateTicket(@CurrentSecurityContext(expression = "authentication.name") String username,
+                               @RequestParam Long id,
                                @RequestParam String assignee,
                                @RequestParam String description,
                                @RequestParam Priority priority,
@@ -120,15 +158,31 @@ public class TicketController {
         ticket.setDescription(description);
         ticketService.saveTicket(ticket);
 
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.UPDATE);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticket);
+        timelineService.saveTimeline(timeline);
+
         return correctToListRedirect(ticket, projectId);
     }
 
     @GetMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String deleteOpenTicket(@PathVariable("id") Long id,
+    public String deleteOpenTicket(@CurrentSecurityContext(expression = "authentication.name") String username,
+                                   @PathVariable("id") Long id,
                                    @PathVariable String projectId) {
+
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.DELETE);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticketService.findById(id));
+        timelineService.saveTimeline(timeline);
+
         String returnStr = correctToListRedirect(ticketService.findById(id), projectId);
-        ticketService.deleteById(id);
+        ticketService.setStatus(id, Status.DELETED);
         return returnStr;
     }
 
@@ -143,10 +197,19 @@ public class TicketController {
     @GetMapping("/take/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public String setAssigneeCurrentUser(@CurrentSecurityContext(expression = "authentication.name") String username,
-                                         @PathVariable Long id) {
+                                         @PathVariable Long id,
+                                         @PathVariable String projectId) {
         Ticket ticket = ticketService.findById(id);
         ticket.setAssignee(userService.findByLogin(username));
         ticketService.saveTicket(ticket);
+
+        Timeline timeline = new Timeline();
+        timeline.setAction(Action.PICK_UP);
+        timeline.setUser(userService.findByLogin(username));
+        timeline.setProject(projectService.findById(Long.parseLong(projectId)));
+        timeline.setTicket(ticket);
+        timelineService.saveTimeline(timeline);
+
         return "redirect:/project/{projectId}/tickets/list?status=OPEN";
     }
 

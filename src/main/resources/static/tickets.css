@@ -93,7 +93,7 @@ th,tr:nth-child(even) {
 }
 
 .sidelink#logout{
-    margin-top: 620px;
+    margin-top: 550px;
     text-align: center;
 }
 
@@ -150,4 +150,28 @@ th,tr:nth-child(even) {
     height: 30px;
     text-align: left;
     /*color: white;*/
+}
+
+.timeline {
+    margin-top: 65px;
+    margin-left: 235px;
+}
+
+.timeline a{
+    color: #157853;
+}
+
+.timeline table{
+    width: 49.7%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.timeline th {
+    width: 1000px;
+    font-size: 25px;
+}
+
+.timeline td {
+    font-size: 18px;
 }
