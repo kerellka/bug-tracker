@@ -8,10 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.suai.tracker_test.exceptions.UserNotFoundException;
 import org.suai.tracker_test.model.*;
-import org.suai.tracker_test.service.ProjectService;
-import org.suai.tracker_test.service.TicketService;
-import org.suai.tracker_test.service.TimelineService;
-import org.suai.tracker_test.service.UserService;
+import org.suai.tracker_test.repository.CommentRepository;
+import org.suai.tracker_test.service.*;
 
 import java.util.*;
 
@@ -23,14 +21,17 @@ public class TicketController {
     private final UserService userService;
     private final ProjectService projectService;
     private final TimelineService timelineService;
+    private final CommentService commentService;
 
     @Autowired
     public TicketController(TicketService ticketService, UserService userService,
-                            ProjectService projectService, TimelineService timelineService) {
+                            ProjectService projectService, TimelineService timelineService,
+                            CommentService commentService) {
         this.ticketService = ticketService;
         this.userService = userService;
         this.projectService = projectService;
         this.timelineService = timelineService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/list")
@@ -188,11 +189,27 @@ public class TicketController {
 
     @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public String showDetails(@PathVariable("id") Long id, Model model) {
+    public String showDetails(@PathVariable("id") Long id, Model model, Comment comment) {
         Ticket ticket = ticketService.findById(id);
         model.addAttribute("ticket", ticket);
+        List<Comment> comments = commentService.findAllForTicket(ticket);
+        Collections.reverse(comments);
+        model.addAttribute("comments", comments);
         return "tickets/details";
     }
+
+    @PostMapping("/details/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public String postComment(@PathVariable("id") Long id,
+                              Comment comment,
+                              @PathVariable("projectId") String projectId,
+                              @CurrentSecurityContext(expression = "authentication.name") String username) {
+        comment.setTicket(ticketService.findById(id));
+        comment.setUser(userService.findByLogin(username));
+        commentService.saveComment(comment);
+        return "redirect:/project/{projectId}/tickets/details/{id}";
+    }
+
 
     @GetMapping("/take/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

@@ -42,6 +42,7 @@ th,tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
+
 .tickets {
     margin-right: 5px;
     margin-top: 65px;
@@ -174,4 +175,74 @@ th,tr:nth-child(even) {
 
 .timeline td {
     font-size: 18px;
+}
+
+.details {
+    margin-right: 5px;
+    margin-top: 65px;
+    margin-left: 235px;
+}
+
+.details a{
+    color: #157853;
+}
+
+.details table {
+    width: 49.7%;
+    height: 405px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.details th {
+    width: 1000px;
+    font-size: 20px;
+}
+.details table tr {
+    height: 100%;
+    max-height: 100%;
+}
+
+.comments {
+    margin-right: 5px;
+    margin-top: 65px;
+    margin-left: 400px;
+}
+
+.comments a{
+    color: #157853;
+}
+
+.comments table{
+    width: 1300px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#date {
+    color: darkgray;
+    font-size: 16px;
+}
+
+#name {
+    font-size: 19px;
+}
+
+#postBtn{
+    border-radius: 5px;
+    color: #fff;
+    width: 10%;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px 16px;
+    margin: 5px 90% auto;
+}
+
+#postBtn{
+    background-color: rgb( 37, 179, 112 );
+    border: 0px solid ;
+}
+
+#postBtn {
+    background-color: rgb( 21, 120, 83 );
 }

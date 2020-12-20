@@ -2,15 +2,32 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/tickets.css}">
     <title>Details</title>
 </head>
 <body>
-<h2 th:text="${ticket.title}"></h2>
-<div>
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="../list" method="GET">
+        <button class="sidelink" type="submit" name="status" value="OPEN">Tickets</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+<div class="details">
     <table>
         <thead>
         <tr>
-            <th colspan="2"></th>
+            <th colspan="2" th:text="${ticket.title}">TITLE</th>
         </tr>
         </thead>
         <tbody>
@@ -20,11 +37,21 @@
         </tr>
         <tr>
             <td>Type</td>
-            <td th:text="${ticket.type}"></td>
+            <td>FEATURE</td>
         </tr>
         <tr>
             <td>Priority</td>
-            <td th:text="${ticket.priority}"></td>
+            <div th:switch="${ticket.priority.name()}">
+                <td th:case="'LOW'">
+                    <button class="label low">T E X T</button>
+                </td>
+                <td th:case="'MID'">
+                    <button class="label mid">T E X T</button>
+                </td>
+                <td th:case="'HIGH'">
+                    <button class="label high">T E X T</button>
+                </td>
+            </div>
         </tr>
         <tr>
             <td>Status</td>
@@ -34,10 +61,7 @@
             <td>Open date</td>
             <td th:text="${ticket.openDate}"></td>
         </tr>
-        <tr th:if="${ticket.closeDate != null}">
-            <td>Close date</td>
-            <td th:text="${ticket.closeDate}"></td>
-        </tr>
+
         <tr>
             <td>Reporter</td>
             <td th:text="${ticket.reporter.login}"></td>
@@ -45,20 +69,41 @@
         <tr>
             <td>Assignee</td>
             <td th:if="${ticket.assignee != null}" th:text="${ticket.assignee.login}"></td>
-            <td th:unless="${ticket.assignee != null}">null</td>
-        </tr>
-        <tr>
-            <td>Description</td>
-            <td th:text="${ticket.description}"></td>
+            <td th:unless="${ticket.assignee != null}">
+                <a th:href="@{./take/{id}(id=${ticket.id})}">Take</a>
+            </td>
         </tr>
         </tbody>
     </table>
+    <table>
+        <thead>
+        <tr>
+            <th colspan="2">Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr><td th:text="${ticket.description}"></td></tr>
+        </tbody>
+    </table>
 </div>
+<div class="comments">
+    <table>
+        <thead>
+        <tr><td><form action="#" th:action="@{./{id}(id=${ticket.id})}" th:object="${comment}" method="POST">
+            <textarea rows="6" cols="156" th:field="*{content}"></textarea>
+            <input type="submit" id="postBtn" value="Post">
+        </form></td></tr>
+        </thead>
+        <tbody>
+        <div th:each="comment : ${comments}">
+            <tr><td>
+                <span id="name" th:text="${comment.user.login}"></span><br/><br/>
+                <span th:text="${comment.content}"></span><br/><br/>
+                <span id="date" th:inline="text">[[${comment.postDate} + ' ' + ${comment.postTime}]]</span>
+            </td></tr>
+        </div>
+        </tbody>
+    </table></div>
 <p></p>
-<div th:switch="${ticket.status.name()}">
-    <a th:case="OPEN" th:href="@{../list?status=OPEN}">Back</a>
-    <a th:case="IN_PROGRESS" th:href="@{../list?status=IN_PROGRESS}">Back</a>
-    <a th:case="CLOSE" th:href="@{../list?status=CLOSE}">Back</a>
-</div>
 </body>
 </html>
