@@ -3,13 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
 </head>
 <body>
-<div th:switch="${user}">
+
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button style="margin-top: 640px;" class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+
+<div th:switch="${user}" class="tickets">
     <h2 th:case="null">Something go wrong!</h2>
     <h2 th:case="*">My profile</h2>
     <form action="#" th:action="@{./delete/{id}(id=${user.id})}" method="post">
-        <button type="submit">Delete profile</button>
+        <button id="postBtn" style="width:10%;" type="submit">Delete profile</button>
     </form>
     <table>
         <thead>
@@ -29,12 +43,6 @@
         <tr>
             <td>Email</td>
             <td th:text="${user.email}"></td>
-        </tr>
-        <tr>
-            <td>Projects</td>
-            <div th:each="project : ${projects}">
-                <td th:text="${project.title}"></td><p></p>
-            </div>
         </tr>
         </tbody>
     </table>

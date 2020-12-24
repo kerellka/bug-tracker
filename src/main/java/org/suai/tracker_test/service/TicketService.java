@@ -69,6 +69,7 @@ public class TicketService {
                 return ticketStream
                         .sorted((Comparator.comparing(Ticket::getOpenDate)))
                         .collect(Collectors.toList());
+
             case "dateDESC":
                 return ticketStream
                         .sorted((Collections.reverseOrder(Comparator.comparing(Ticket::getOpenDate))))
@@ -91,7 +92,7 @@ public class TicketService {
         List<Ticket> all = findAllInProject(project);
         List<Ticket> closed = findByStatus(Status.CLOSE, project);
 
-        return (closed.size() * 100) / all.size();
+        return all.size() == 0 ? 100 : (closed.size() * 100) / all.size();
     }
 
     public long countWithStatus(Project project, Status status) {

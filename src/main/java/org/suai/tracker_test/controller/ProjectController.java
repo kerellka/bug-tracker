@@ -35,7 +35,7 @@ public class ProjectController {
     @GetMapping("/projects")
     public String getAllProjects(@CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         User user = userService.findByLogin(username);
-        List<Project> projects = user.getProjects(); // TODO find user by project that current user in
+        List<Project> projects = user.getProjects();
         model.addAttribute("projects", projects);
         return "projects/all";
     }
@@ -46,7 +46,9 @@ public class ProjectController {
     }
 
     @PostMapping("/create_project")
-    public String createProject(Project project) {
+    public String createProject(@CurrentSecurityContext(expression = "authentication.name") String username,
+                                Project project) {
+        project.getUsers().add(userService.findByLogin(username));
         projectService.saveProject(project);
         return "redirect:/projects";
     }

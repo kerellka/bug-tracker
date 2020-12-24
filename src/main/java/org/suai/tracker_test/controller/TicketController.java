@@ -57,7 +57,7 @@ public class TicketController {
         tickets = ticketService.filterByTypeAndPriority(tickets, types, priorities);
 
         model.addAttribute("tickets", tickets);
-        model.addAttribute("status", Status.valueOf(status));
+        model.addAttribute("status", Status.valueOf(status.replaceAll(" ", "_")));
         return "tickets/all";
     }
 

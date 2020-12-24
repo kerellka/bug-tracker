@@ -8,6 +8,10 @@
 <div class="container">
     <form class="form-signin" method="post" action="/auth/login">
         <h2 class="form-signin-heading">Login</h2>
+        <div th:if="${loginError}">
+            <div style="color: red" th:text="${loginError}">
+            </div>
+        </div>
         <p>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>

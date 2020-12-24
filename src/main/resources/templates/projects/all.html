@@ -10,7 +10,7 @@
     <form action="/me/profile" method="GET">
         <button class="sidelink" type="submit">User</button>
     </form>
-    <form action="./create" method="GET">
+    <form action="./create_project" method="GET">
         <button class="sidelink" type="submit">Create Project</button>
     </form>
     <form action="/auth/logout" method="POST">
@@ -23,12 +23,19 @@
         <tr>
             <th>Title</th>
             <th>Actions</th>
+            <th>Users</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="project : ${projects}">
             <td><a th:href="@{project/{id}/tickets/list?status=OPEN(id=${project.id})}" th:text="${project.title}"></a></td>
             <td><a th:href="@{update_project/{id}(id=${project.id})}">Edit</a></td>
+            <td><select>
+                <option>Users</option>
+                <div th:each="user : ${project.users}">
+                    <option disabled th:text="${user.login}"></option>
+                </div>
+            </select></td>
         </tr>
         </tbody>
     </table>

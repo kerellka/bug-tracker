@@ -91,7 +91,7 @@
         <thead>
         <tr><td><form action="#" th:action="@{./{id}(id=${ticket.id})}" th:object="${comment}" method="POST">
             <textarea rows="6" cols="156" th:field="*{content}"></textarea>
-            <input type="submit" id="postBtn" value="Post">
+            <input type="submit" id="postBtn" style="width: 10%; margin: 5px 90% auto" value="Post">
         </form></td></tr>
         </thead>
         <tbody>

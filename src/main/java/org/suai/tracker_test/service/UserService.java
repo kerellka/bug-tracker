@@ -61,6 +61,18 @@ public class UserService {
                 .findAny().orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    public boolean checkCredits(String username, String password) {
+        try {
+            User user = userRepository.findByLogin(username);
+            if (!bCryptPasswordEncoder.encode(password).equals(user.getPassword())) {
+                return false;
+            }
+        } catch (UserNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean existsWithEmail(String email) {
         boolean result = false;
 

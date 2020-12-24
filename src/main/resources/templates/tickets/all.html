@@ -38,7 +38,8 @@
 
 <div class="filter">
     <form action="./list" method="GET">
-        <label for="sort">Sort by</label>
+        <span style="color:white">T E X T T E X T T E X T T E X T</span>
+        <label for="sort"><b>Sort by</b></label>
         <select id="sort" name="sort">
             <option value="default" selected>Default</option>
             <option value="dateDESC">Open date new first</option>
@@ -46,23 +47,23 @@
             <option value="priorityDESC">Priority high first</option>
             <option value="priorityASC">Priority low first</option>
         </select>
-        <br/>
-        <label>Priority</label>
+        <span style="color:white">T E X T T E X T</span>
+        <label><b>Priority</b></label>
         <label for="low">LOW</label>
         <input type="checkbox" id="low" name="priority" value="LOW">
         <label for="mid">MID</label>
         <input type="checkbox" id="mid" name="priority" value="MID">
         <label for="high"> HIGH</label>
         <input type="checkbox" id="high" name="priority" value="HIGH">
-        <br/>
-        <label>Type</label>
+        <span style="color:white">T E X T T E X T</span>
+        <label><b>Type</b></label>
         <label for="bug">BUG</label>
         <input type="checkbox" id="bug" name="type" value="BUG">
         <label for="feature">FEATURE</label>
         <input type="checkbox" id="feature" name="type" value="FEATURE">
-        <input hidden name="status" th:value="${status}">
-        <br/>
-        <input type="submit" value="Filter">
+        <input hidden name="status" th:value="${status.name()}">
+        <span style="color:white">T E X T T E X T</span>
+        <input type="submit" id="postBtn" style="width: 5%; margin: 5px 0% auto" value="Filter">
     </form>
 </div>
 

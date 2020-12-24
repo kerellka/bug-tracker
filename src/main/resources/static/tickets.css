@@ -45,12 +45,16 @@ th,tr:nth-child(even) {
 
 .tickets {
     margin-right: 5px;
-    margin-top: 65px;
+    margin-top: 40px;
     margin-left: 235px;
 }
 
 .tickets a{
     color: #157853;
+}
+
+.tickets select{
+    width: 50px;
 }
 
 .topBar {
@@ -231,18 +235,149 @@ th,tr:nth-child(even) {
 #postBtn{
     border-radius: 5px;
     color: #fff;
-    width: 10%;
+    width: 100%;
     text-align: center;
     font-size: 14px;
     padding: 10px 16px;
-    margin: 5px 90% auto;
+    margin: 5px auto;
 }
 
 #postBtn{
-    background-color: rgb( 37, 179, 112 );
+    background-color: #25b370;
     border: 0px solid ;
 }
 
-#postBtn {
+#postBtn:hover{
     background-color: rgb( 21, 120, 83 );
+}
+
+
+div.container{
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 540px;
+    height: auto;
+    padding: 50px;
+    margin: 60px 40% auto;
+    box-sizing: border-box;
+    /* border-radius */
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    /* box-shadow */
+    -webkit-box-shadow: rgba(0,0,0,0.2) 0px 1px 3px;
+    -moz-box-shadow: rgba(0,0,0,0.2) 0px 1px 3px;
+    box-shadow: rgba(0,0,0,0.2) 0px 1px 3px;
+}
+
+div.container#update{
+    margin: -45px 40% auto;
+}
+
+
+
+div.container p {
+    align-self: flex-start;
+    font-family: 'Roboto', sans-serif;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
+h2.form-signin-heading{
+    text-align: center;
+}
+
+
+/* Full-width inputs */
+input[type=text], input[type=password] {
+    width: 99%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.ticket_form {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    margin: 0 0 10px 0;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background: #FAFAFA;
+
+}
+
+.ticket_form > h2 {
+
+    padding: 10px;
+    margin: -2px -10px 1px -10px;
+    color: #157853;
+    border-radius: 3px;
+}
+
+.containerButton {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.containerButton input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.containerButton:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.containerButton input:checked ~ .checkmark {
+    background-color: #25b370;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.containerButton input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.containerButton .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
 }

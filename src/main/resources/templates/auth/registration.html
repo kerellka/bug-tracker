@@ -29,6 +29,9 @@
         <tr>
 
             <td><input type="password"  placeholder="Enter Password" name="psw" required  th:field="*{password}"/></td>
+            <div th:if="${passwordIncorrectSymbols}">
+                <div style="color: red" th:text="${passwordIncorrectSymbols}"></div>
+            </div>
         </tr>
 
         <tr>

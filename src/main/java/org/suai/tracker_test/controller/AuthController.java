@@ -3,10 +3,7 @@ package org.suai.tracker_test.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.suai.tracker_test.model.User;
 import org.suai.tracker_test.service.UserService;
 
@@ -26,6 +23,17 @@ public class AuthController {
         return "auth/login";
     }
 
+    @PostMapping("/login")
+    public String checkCredits(@RequestParam("username") String username,
+                               @RequestParam("password") String password,
+                               Model model) {
+        if (userService.checkCredits(username, password)) {
+            model.addAttribute("loginError", "Incorrect data!");
+            return "redirect:/auth/login";
+        }
+        return "auth/login";
+    }
+
     @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
         User user = new User();
@@ -35,6 +43,11 @@ public class AuthController {
 
     @PostMapping("/registration")
     public String addUser(@ModelAttribute("user") User user, Model model) {
+
+        if (!user.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
+            model.addAttribute("passwordIncorrectSymbols", "Password must contain 8 characters, at least one letter and one number");
+            return "auth/registration";
+        }
 
         if (!user.getPassword().equals(user.getConfirmPassword())){
             model.addAttribute("passwordError", "Passwords doesn't match");
