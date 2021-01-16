@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
+</head>
+<body>
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="./progress" method="GET">
+        <button class="sidelink" type="submit">Progress</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+
+<div class="topBar">
+    <form action="./list" method="GET">
+        <button class="tablink" type="submit" name="status" value="OPEN">Open</button>
+    </form>
+    <form action="./list" method="GET">
+        <button class="tablink" type="submit" name="status" value="IN_PROGRESS">In Progress</button>
+    </form>
+    <form action="./list" method="GET">
+        <button class="tablink" type="submit" name="status" value="CLOSE">Close</button>
+    </form>
+</div>
+
+<div class="filter">
+    <form action="./list" method="GET">
+        <span style="color:white">T E X T T E X T T E X T T E X T</span>
+        <label for="sort"><b>Sort by</b></label>
+        <select id="sort" name="sort">
+            <option value="default" selected>Default</option>
+            <option value="dateDESC">Open date new first</option>
+            <option value="dateASC">Open date old first</option>
+            <option value="priorityDESC">Priority high first</option>
+            <option value="priorityASC">Priority low first</option>
+        </select>
+        <span style="color:white">T E X T T E X T</span>
+        <label><b>Priority</b></label>
+        <label for="low">LOW</label>
+        <input type="checkbox" id="low" name="priority" value="LOW">
+        <label for="mid">MID</label>
+        <input type="checkbox" id="mid" name="priority" value="MID">
+        <label for="high"> HIGH</label>
+        <input type="checkbox" id="high" name="priority" value="HIGH">
+        <span style="color:white">T E X T T E X T</span>
+        <label><b>Type</b></label>
+        <label for="bug">BUG</label>
+        <input type="checkbox" id="bug" name="type" value="BUG">
+        <label for="feature">FEATURE</label>
+        <input type="checkbox" id="feature" name="type" value="FEATURE">
+        <input hidden name="status" th:value="${status.name()}">
+        <span style="color:white">T E X T T E X T</span>
+        <input type="submit" id="postBtn" style="width: 5%; margin: 5px 0% auto" value="Filter">
+    </form>
+</div>
+
+<div th:switch="${tickets}" class="tickets">
+    <h2 th:case="null">No tickets found!</h2>
+    <div th:case="*">
+        <h2></h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Type</th>
+                <th>Open date</th>
+                <th th:if="${status.name() == 'CLOSE'}">Close date</th>
+                <th>Status</th>
+                <th>Reporter</th>
+                <th>Assignee</th>
+                <th th:if="${status.name() != 'CLOSE'}" colspan="3" class="actionsTop">Actions</th>
+                <th th:unless="${status.name() != 'CLOSE'}" class="actionsTop">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ticket : ${tickets}">
+                <div th:if="${ticket.status == status}">
+                    <td th:inline="text">[['00' + ${ticket.id}]]</td>
+                    <td><a th:text="${ticket.title}" th:href="@{./details/{id}(id=${ticket.id})}"></a></td>
+                    <div th:switch="${ticket.priority.name()}">
+                        <td th:case="'LOW'">
+                            <button class="label low">T E X T</button>
+                        </td>
+                        <td th:case="'MID'">
+                            <button class="label mid">T E X T</button>
+                        </td>
+                        <td th:case="'HIGH'">
+                            <button class="label high">T E X T</button>
+                        </td>
+                    </div>
+                    <td th:text="${ticket.type}"></td>
+                    <td th:text="${ticket.openDate}"></td>
+                    <td th:if="${ticket.closeDate != null}" th:text="${ticket.closeDate}"></td>
+                    <td th:text="${ticket.status}"></td>
+                    <td th:if="${ticket.reporter != null}" th:text="${ticket.reporter.login}"></td>
+                    <td th:unless="${ticket.reporter != null}">null</td>
+                    <td th:if="${ticket.assignee != null}" th:text="${ticket.assignee.login}"></td>
+                    <td th:unless="${ticket.assignee != null}">
+                        <a th:href="@{./take/{id}(id=${ticket.id})}">Take</a>
+                    </td>
+                    <td th:if="${ticket.status.name() != 'CLOSE'}">
+                        <a th:href="@{./update/{id}(id=${ticket.id})}">Edit</a>
+                    </td>
+                    <td th:if="${ticket.status.name() == 'OPEN'}">
+                        <a th:if="${ticket.assignee != null}" th:href="@{./progress/{id}(id=${ticket.id})}">In
+                            progress</a>
+                        <a th:unless="${ticket.assignee != null}" style="text-decoration: underline; cursor: pointer"
+                           onclick="alertPopUp()">In progress</a>
+                        <script>
+                            function alertPopUp() {
+                                alert("Set assignee before");
+                            }
+                        </script>
+                    </td>
+                    <td th:if="${ticket.status.name() == 'IN_PROGRESS'}">
+                        <a th:href="@{./close/{id}(id=${ticket.id})}">Close</a>
+                    </td>
+                    <td><a th:href="@{./delete/{id}(id=${ticket.id})}">Delete</a></td>
+                </div>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p></p>
+</div>
+</body>
+</html>

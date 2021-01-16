@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Progress</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
+</head>
+<body>
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="./list" method="GET">
+        <button class="sidelink" type="submit" name="status" value="OPEN">Tickets</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+
+<h2 style="margin-left:235px">Current progress</h2>
+<div id="myProgress">
+    <div id="myBar" th:style="'width:' + ${progress} + '%;'" th:inline="text">[[${progress} + '%']]</div>
+</div>
+<div th:switch="${timeline}" class="timeline">
+    <h2 th:case="null">No actions found!</h2>
+    <div th:case="*">
+        <h2></h2>
+        <table>
+            <thead>
+            <tr>
+                <th colspan="5">Timeline</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="timelineAction : ${timeline}">
+                <td
+                    th:inline="text">[[${timelineAction.user.login} + ' '
+                    + ${timelineAction.action.name().toLowerCase().replaceAll("_", " ") + ' '
+                    + ' ticket '}]]
+                    <a th:inline="text"
+                       th:href="@{./details/{id}(id=${timelineAction.ticket.id})}">[['00' + ${timelineAction.ticket.id}]]</a><br/>
+                    [[${timelineAction.actionDate} + ' | ' + ${timelineAction.actionTime}]]
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <table>
+            <thead>
+            <tr>
+                <th>Statistics</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:inline="text">[['OPEN: ' + ${open}]] <br/>
+                    <a style="color:white">TEXT</a>
+                </td>
+            </tr>
+            <tr>
+                <td th:inline="text">[['IN PROGRESS: ' + ${in_progress}]]<br/>
+                    <a style="color:#f2f2f2">TEXT</a>
+                </td>
+            </tr>
+            <tr>
+                <td th:inline="text">[['CLOSE: ' + ${close}]]<br/>
+                    <a style="color:white">TEXT</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p></p>
+</div>
+</body>
+</html>

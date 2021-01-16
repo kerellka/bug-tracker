@@ -3,48 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Update</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
 </head>
-<body>
-<form action="#" th:action="@{./update}" method="post" id="ticket_form">
-    <label for="id">ID</label>
-    <input readonly type="number" th:value="${ticket.id}" id="id" name="id" placeholder="ID">
-    <br/><br/>
-    <label th:for="title">Title</label>
-    <input type="text" th:value="${ticket.title}" id="title"/>
-    <br/><br/>
-    <label th:for="type">Type</label>
-    <input readonly type="text" th:value="${ticket.type}" id="type"/>
-    <br/><br/>
-    <label th:for="status">Status</label>
-    <input readonly type="text" th:value="${ticket.status}" id="status"/>
-    <br/><br/>
-    <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
-        <label th:text="${priority}">PRIORITY</label>
-        <span th:if="${ticket.priority != priority}"><input type="radio" th:value="${priority}" name="priority"/></span>
-        <span th:unless="${ticket.priority != priority}"><input type="radio" th:value="${priority}" name="priority" checked/></span>
-    </th:block>
-    <br/><br/>
-    <label th:for="openDate">Open date</label>
-    <input readonly type="date" th:value="${ticket.openDate}" id="openDate"/>
-    <br/><br/>
-    <label th:for="reporter">Reporter</label>
-    <input type="text" th:value="${ticket.reporter.login}" id="reporter"/>
-    <br/><br/>
-    <label for="assignee">Assignee</label>
-    <input type="text" th:value="${ticket.assignee.login}" id="assignee" name="assignee"/>
-    <br/><br/>
-    <label for="description">Description</label><br/>
-    <textarea id="description" form="ticket_form"
-              rows="5" cols="33" th:text="${ticket.description}" name="description">
-    </textarea>
-    <br/>
-    <input type="submit" value="Update Ticket">
-</form>
-<br/>
-<div th:switch="${ticket.status}">
-    <a th:case="${T(org.suai.tracker_test.model.Status).OPEN}" href="../open_list">Back</a>
-    <a th:case="${T(org.suai.tracker_test.model.Status).IN_PROGRESS}" href="../progress_list">Back</a>
-    <a th:case="${T(org.suai.tracker_test.model.Status).CLOSE}" href="../close_list">Back</a>
+<body style="overflow: hidden">
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="../list" method="GET">
+        <button class="sidelink" type="submit" name="status" value="OPEN">Tickets</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
 </div>
+<div class="container" id="update">
+    <form action="#" th:action="@{../update}" method="post" id="ticket_form">
+        <input hidden type="text" th:value="${ticket.id}" id="id" name="id"/>
+        <br/><br/>
+        <label th:for="title">Title</label>
+        <input type="text" th:value="${ticket.title}" id="title"/>
+        <br/><br/>
+        <input hidden type="text" th:value="${ticket.type}" id="type"/>
+        <br/><br/>
+        <label th:for="status">Status</label>
+        <input hidden type="text" th:value="${ticket.status}" id="status"/>
+        <br/><br/>
+        <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
+            <label class="containerButton" th:inline="text">[[${priority}]]
+                <input th:if="${ticket.priority != priority}" type="radio" th:value="${priority}" name="priority"/>
+                <input th:unless="${ticket.priority != priority}" type="radio" th:value="${priority}" name="priority" checked/>
+                <span class="checkmark"></span>
+            </label>
+        </th:block>
+        <input hidden type="text" th:value="${ticket.openDate}" id="openDate"/>
+        <input hidden type="text" th:value="${ticket.reporter.login}" id="reporter"/>
+        <br/><br/>
+        <label th:for="assignee">Assignee</label>
+        <select id="user_login_remove" name="assignee">
+            <option th:if="${ticket.assignee == null}" type="text" value="null" th:id="assignee" name="assignee"></option>
+            <div th:each="user : ${users}">
+                <option th:value="${user.login}" th:text="${user.login}"></option>
+            </div>
+        </select>
+  <!--      <input th:if="${ticket.assignee != null}" type="text" th:value="${ticket.assignee.login}" th:id="assignee"
+               name="assignee"/>
+        <input th:unless="${ticket.assignee != null}" type="text" value="null" th:id="assignee" name="assignee"/>-->
+        <br/><br/>
+        <label for="description">Description</label><br/>
+        <textarea id="description" form="ticket_form"
+                  rows="5" cols="52" th:text="${ticket.description}" name="description">
+    </textarea>
+        <br/>
+        <input id="postBtn" type="submit" value="Update Ticket">
+    </form>
+</div>
+<br/>
 </body>
 </html>

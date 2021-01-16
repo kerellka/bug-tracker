@@ -5,10 +5,16 @@ import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.suai.tracker_test.model.User;
 import org.suai.tracker_test.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
+@RequestMapping("/me")
 public class UserController {
 
     private final UserService userService;
@@ -24,5 +30,12 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("projects", user.getProjects());
         return "users/profile";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteProfile(@PathVariable Long id, HttpServletRequest request) {
+        request.getSession().invalidate(); // TODO костыль - пофиксить по возможности
+        userService.deleteById(id);
+        return "auth/login";
     }
 }

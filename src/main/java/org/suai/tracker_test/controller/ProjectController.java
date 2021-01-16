@@ -1,6 +1,7 @@
 package org.suai.tracker_test.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,27 +36,33 @@ public class ProjectController {
     @GetMapping("/projects")
     public String getAllProjects(@CurrentSecurityContext(expression = "authentication.name") String username, Model model) {
         User user = userService.findByLogin(username);
-        List<Project> projects = user.getProjects(); // TODO find user by project that current user in
+        List<Project> projects = user.getProjects();
         model.addAttribute("projects", projects);
         return "projects/all";
     }
 
     @GetMapping("/create_project")
+    @PreAuthorize("hasRole('ADMIN')")
     public String getCreateForm(Project project) {
         return "projects/create";
     }
 
     @PostMapping("/create_project")
-    public String createProject(Project project) {
+    public String createProject(@CurrentSecurityContext(expression = "authentication.name") String username,
+                                Project project) {
+        project.getUsers().add(userService.findByLogin(username));
+        userService.findByLogin(username).getProjects().add(project);
         projectService.saveProject(project);
         return "redirect:/projects";
     }
 
     @GetMapping("/update_project/{id}")
-    public String getUpdateForm(@PathVariable("id") Long id, Model model) {
+    public String getUpdateForm(@PathVariable("id") Long id, Model model,
+                                @CurrentSecurityContext(expression = "authentication.name") String username) {
         Project project = projectService.findById(id);
         model.addAttribute("project", project);
         model.addAttribute("users", project.getUsers());
+        model.addAttribute("currentUser", userService.findByLogin(username));
         return "projects/update";
     }
 

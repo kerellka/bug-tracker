@@ -3,16 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Projects</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
 </head>
 <body>
-<h1>Projects</h1><br/><br/>
-<a href="/create_project">Create project</a>
-<div th:each="project : ${projects}">
-    <a th:href="@{project/{id}/tickets/open_list(id=${project.id})}" th:text="${project.title}"></a>
-    <a th:href="@{update_project/{id}(id=${project.id})}">Edit</a>
-    <div th:each="user : ${project.users}">
-        <p th:text="${user.login}"></p>
-    </div>
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create_project" method="GET">
+        <button class="sidelink" type="submit">Create Project</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" style="margin-top: 640px;" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+<div class="tickets">
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Actions</th>
+            <th>Users</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="project : ${projects}">
+            <td><a th:href="@{project/{id}/tickets/list?status=OPEN(id=${project.id})}" th:text="${project.title}"></a></td>
+            <td><a th:href="@{update_project/{id}(id=${project.id})}">Edit</a></td>
+            <td><select>
+                <option>Users</option>
+                <div th:each="user : ${project.users}">
+                    <option disabled th:text="${user.login}"></option>
+                </div>
+            </select></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

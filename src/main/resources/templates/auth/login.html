@@ -1,15 +1,17 @@
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <title>Login Custom</title>
+    <link rel="stylesheet" th:href="@{/login.css}">
 </head>
 <body>
 <div class="container">
-    <form action="/auth/registration" method="GET">
-        <button type="submit">Registration</button>
-    </form>
     <form class="form-signin" method="post" action="/auth/login">
         <h2 class="form-signin-heading">Login</h2>
+        <div th:if="${loginError}">
+            <div style="color: red" th:text="${loginError}">
+            </div>
+        </div>
         <p>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" class="form-control" placeholder="Username" required>
@@ -18,7 +20,10 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         </p>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn" type="submit" href='#'>Sign in</button>
+    </form>
+    <form class="form-signin" action="/auth/registration" method="GET">
+        <button class="btn" type="submit">Registration</button>
     </form>
 </div>
 </body>

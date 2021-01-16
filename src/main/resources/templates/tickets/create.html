@@ -3,27 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>Create ticket</title>
+    <link rel="stylesheet" th:href="@{/tickets.css}">
 </head>
 <body>
-<form id="ticket_form" action="#" th:action="@{./create}" th:object="${ticket}" method="post">
-    <label th:for="title">Title</label>
-    <input type="text" th:field="*{title}" id="title"/>
-    <br/>
-    <th:block th:each="type : ${T(org.suai.tracker_test.model.Type).values()}">
-        <label th:text="${type}">TYPE</label>
-        <input type="radio" th:field="*{type}" th:value="${type}" name="type"/>
-    </th:block>
-    <br/>
-    <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
-        <label th:text="${priority}">PRIORITY</label>
-        <input type="radio" th:field="*{priority}" th:value="${priority}" name="priority"/>
-    </th:block>
-    <br/>
-    <label for="description">Description</label><br/>
-    <textarea id="description" form="ticket_form"
-              rows="5" cols="33" th:field="*{description}">
+<div id="mySidenav" class="sidenav">
+    <form action="/me/profile" method="GET">
+        <button class="sidelink" type="submit">User</button>
+    </form>
+    <form action="./create" method="GET">
+        <button class="sidelink" type="submit">Add Ticket</button>
+    </form>
+    <form action="./list" method="GET">
+        <button class="sidelink" type="submit" name="status" value="OPEN">Tickets</button>
+    </form>
+    <form action="/projects" method="GET">
+        <button class="sidelink" type="submit">Projects</button>
+    </form>
+    <form action="/auth/logout" method="POST">
+        <button class="sidelink" id="logout" type="submit">Logout</button>
+    </form>
+</div>
+<div class="container">
+    <form id="ticket_form" action="#" th:action="@{./create}" th:object="${ticket}" method="post">
+        <label th:for="title">Title</label>
+        <input type="text" th:field="*{title}" id="title"/>
+        <br/><br/>
+        <label>Type</label>
+        <th:block th:each="type : ${T(org.suai.tracker_test.model.Type).values()}">
+            <label class="containerButton" th:inline="text">[[${type}]]
+            <input type="radio" th:field="*{type}" th:value="${type}" name="type"/>
+                <span class="checkmark"></span>
+            </label>
+        </th:block>
+        <br/>
+        <label>Priority</label>
+        <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
+            <label class="containerButton" th:inline="text">[[${priority}]]
+                <input type="radio" th:field="*{priority}" th:value="${priority}" name="priority"/>
+                <span class="checkmark"></span>
+            </label>
+        </th:block>
+        <br/><br/>
+        <label for="description">Description</label><br/>
+        <textarea id="description" form="ticket_form"
+                  rows="8" cols="52" th:field="*{description}">
 </textarea><br/>
-    <input type="submit" value="Create Ticket">
-</form>
+        <input id="postBtn" type="submit" value="Create Ticket">
+    </form>
+</div>
 </body>
 </html>
