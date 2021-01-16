@@ -28,6 +28,7 @@
         <label th:for="title">Title</label>
         <input type="text" th:field="*{title}" id="title"/>
         <br/><br/>
+        <label>Type</label>
         <th:block th:each="type : ${T(org.suai.tracker_test.model.Type).values()}">
             <label class="containerButton" th:inline="text">[[${type}]]
             <input type="radio" th:field="*{type}" th:value="${type}" name="type"/>
@@ -35,6 +36,7 @@
             </label>
         </th:block>
         <br/>
+        <label>Priority</label>
         <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
             <label class="containerButton" th:inline="text">[[${priority}]]
                 <input type="radio" th:field="*{priority}" th:value="${priority}" name="priority"/>

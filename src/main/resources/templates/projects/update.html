@@ -19,8 +19,7 @@
 </div>
 <div class="container">
     <form action="#" th:action="@{/update_project}" th:object="${project}" method="post" id="project_form">
-        <label for="id">ID</label>
-        <input readonly type="text" th:field="*{id}" th:value="*{id}" id="id"/>
+        <input type="text" th:field="*{id}" th:value="*{id}" id="id" hidden/>
         <br/><br/>
         <label for="title">Title</label>
         <input type="text" th:field="*{title}" th:value="*{title}" id="title" name="title"/>
@@ -38,10 +37,14 @@
     <br/><br/>
     <form action="#" th:action="@{/update_project_remove}" method="post" id="project_form_remove">
         <input type="hidden" th:value="${project.id}" id="id_remove" name="id" hidden/>
-        <label for="title">User Login</label>
-        <input type="text" id="user_login_remove" name="user_login"/>
-        <br/><br/>
-        <input type="submit" id="postBtn" value="Remove from project"/>
+        <label for="title">User Login</label><br/><br/>
+        <select id="user_login_remove" name="user_login">
+            <div th:each="user : ${users}">
+                <option th:if="${user.login == currentUser.login}" disabled th:value="${user.login}" th:text="${user.login}"></option>
+                <option th:unless="${user.login == currentUser.login}" th:value="${user.login}" th:text="${user.login}"></option>
+            </div>
+        </select><br/><br/>
+        <input type="submit" id="rmBtn" value="Remove from project"/>
     </form>
 </div>
 </body>

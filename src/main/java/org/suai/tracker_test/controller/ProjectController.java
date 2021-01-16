@@ -1,6 +1,7 @@
 package org.suai.tracker_test.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,7 @@ public class ProjectController {
     }
 
     @GetMapping("/create_project")
+    @PreAuthorize("hasRole('ADMIN')")
     public String getCreateForm(Project project) {
         return "projects/create";
     }
@@ -49,15 +51,18 @@ public class ProjectController {
     public String createProject(@CurrentSecurityContext(expression = "authentication.name") String username,
                                 Project project) {
         project.getUsers().add(userService.findByLogin(username));
+        userService.findByLogin(username).getProjects().add(project);
         projectService.saveProject(project);
         return "redirect:/projects";
     }
 
     @GetMapping("/update_project/{id}")
-    public String getUpdateForm(@PathVariable("id") Long id, Model model) {
+    public String getUpdateForm(@PathVariable("id") Long id, Model model,
+                                @CurrentSecurityContext(expression = "authentication.name") String username) {
         Project project = projectService.findById(id);
         model.addAttribute("project", project);
         model.addAttribute("users", project.getUsers());
+        model.addAttribute("currentUser", userService.findByLogin(username));
         return "projects/update";
     }
 

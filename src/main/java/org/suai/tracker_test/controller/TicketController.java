@@ -134,9 +134,11 @@ public class TicketController {
 
     @GetMapping("/update/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String createUpdateForm(@PathVariable Long id, Model model) {
+    public String createUpdateForm(@PathVariable Long id, Model model, @PathVariable String projectId) {
+        Project project = projectService.findById(Long.parseLong(projectId));
         Ticket ticket = ticketService.findById(id);
         model.addAttribute("ticket", ticket);
+        model.addAttribute("users", project.getUsers());
         return "tickets/update";
     }
 

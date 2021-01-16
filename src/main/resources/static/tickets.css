@@ -114,17 +114,17 @@ th,tr:nth-child(even) {
 }
 
 .low {
-    background-color: #eec643;
+    background-color: #2d9900;
     border: none;
     outline: none;
-    color: #eec643;
+    color: #2d9900;
     border-radius: 12px;
 }
 .mid {
-    background-color: #ec9657;
+    background-color: #ffd340;
     border: none;
     outline: none;
-    color: #ec9657;
+    color: #ffd340;
     border-radius: 12px;
 }
 .high {
@@ -295,7 +295,6 @@ input[type=text], input[type=password] {
     width: 99%;
     padding: 12px 20px;
     margin: 8px 0;
-    display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
@@ -380,4 +379,29 @@ input[type=text], input[type=password] {
     height: 8px;
     border-radius: 50%;
     background: white;
+}
+
+#rmBtn{
+    border-radius: 5px;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px 16px;
+    margin: 5px auto;
+}
+
+#rmBtn{
+    background-color: #af0606;
+    border: 0px solid ;
+}
+
+#rmBtn:hover{
+    background-color: rgb(88, 0, 0);
+}
+
+#user_login_remove {
+    width: 100%;
+    height:40px;
+    font-size: 18px;
 }

@@ -25,17 +25,15 @@
 </div>
 <div class="container" id="update">
     <form action="#" th:action="@{../update}" method="post" id="ticket_form">
-        <label for="id">ID</label>
-        <input readonly type="text" th:value="${ticket.id}" id="id" name="id">
+        <input hidden type="text" th:value="${ticket.id}" id="id" name="id"/>
         <br/><br/>
         <label th:for="title">Title</label>
         <input type="text" th:value="${ticket.title}" id="title"/>
         <br/><br/>
-        <label th:for="type">Type</label>
-        <input readonly type="text" th:value="${ticket.type}" id="type"/>
+        <input hidden type="text" th:value="${ticket.type}" id="type"/>
         <br/><br/>
         <label th:for="status">Status</label>
-        <input readonly type="text" th:value="${ticket.status}" id="status"/>
+        <input hidden type="text" th:value="${ticket.status}" id="status"/>
         <br/><br/>
         <th:block th:each="priority : ${T(org.suai.tracker_test.model.Priority).values()}">
             <label class="containerButton" th:inline="text">[[${priority}]]
@@ -44,17 +42,19 @@
                 <span class="checkmark"></span>
             </label>
         </th:block>
-        <br/><br/>
-        <label th:for="openDate">Open date</label>
-        <input readonly type="text" th:value="${ticket.openDate}" id="openDate"/>
-        <br/><br/>
-        <label th:for="reporter">Reporter</label>
-        <input readonly type="text" th:value="${ticket.reporter.login}" id="reporter"/>
+        <input hidden type="text" th:value="${ticket.openDate}" id="openDate"/>
+        <input hidden type="text" th:value="${ticket.reporter.login}" id="reporter"/>
         <br/><br/>
         <label th:for="assignee">Assignee</label>
-        <input th:if="${ticket.assignee != null}" type="text" th:value="${ticket.assignee.login}" th:id="assignee"
+        <select id="user_login_remove" name="assignee">
+            <option th:if="${ticket.assignee == null}" type="text" value="null" th:id="assignee" name="assignee"></option>
+            <div th:each="user : ${users}">
+                <option th:value="${user.login}" th:text="${user.login}"></option>
+            </div>
+        </select>
+  <!--      <input th:if="${ticket.assignee != null}" type="text" th:value="${ticket.assignee.login}" th:id="assignee"
                name="assignee"/>
-        <input th:unless="${ticket.assignee != null}" type="text" value="null" th:id="assignee" name="assignee"/>
+        <input th:unless="${ticket.assignee != null}" type="text" value="null" th:id="assignee" name="assignee"/>-->
         <br/><br/>
         <label for="description">Description</label><br/>
         <textarea id="description" form="ticket_form"
